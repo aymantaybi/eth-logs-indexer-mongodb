@@ -3,6 +3,7 @@ import { Filter } from 'eth-logs-indexer';
 import { v4 as uuidv4 } from 'uuid';
 import pubSub from '../pubSub';
 import indexer from '../indexer';
+import mongoClient from '../mongoClient';
 
 const resolvers = {
   JSON: GraphQLJSON,
@@ -24,8 +25,14 @@ const resolvers = {
         transaction: {},
       },
     ],
-    filters: (_: any, args: { tags: string[] }) => {
-      return (indexer.filters || []).filter((filter) => args.tags.includes(filter.tag as string));
+    filters: async (_: any, args: { tags: string[] }) => {
+      const { tags } = args;
+      const filters = await mongoClient
+        .db('eth-logs-indexer:parameters')
+        .collection('filters')
+        .find({ tag: { $in: tags } })
+        .toArray();
+      return filters;
     },
   },
   Mutation: {
@@ -46,6 +53,7 @@ const resolvers = {
         const tag = uuidv4();
         newFilters.push({ tag, ...filter });
       }
+      await mongoClient.db('eth-logs-indexer:parameters').collection('filters').insertMany(newFilters);
       indexer.setFilters(newFilters.concat(oldFilters));
       const tags = newFilters.map((filter) => filter.tag);
       console.log(tags);
@@ -53,6 +61,10 @@ const resolvers = {
     },
     removeFilters: async (_: any, args: { tags: string[] }) => {
       const { tags } = args;
+      await mongoClient
+        .db('eth-logs-indexer:parameters')
+        .collection('filters')
+        .deleteMany({ tag: { $in: tags } });
       const filters: Filter[] = (indexer.filters || []).filter((item) => !tags.includes(item.tag as string));
       indexer.setFilters(filters);
       return tags;

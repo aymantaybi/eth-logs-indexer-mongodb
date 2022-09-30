@@ -110,7 +110,7 @@ input FilterInput {
 }
 
 type Mutation {
-  start(blockNumber: Int!): Boolean!
+  start(blockNumber: Int): Boolean!
   stop: Boolean!
   addFilters(filters: [FilterInput!]!): [String]
   removeFilters(tags: [String!]!): [String]
