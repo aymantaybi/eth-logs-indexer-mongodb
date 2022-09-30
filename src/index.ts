@@ -4,6 +4,7 @@ import { createServer } from '@graphql-yoga/node';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import schema from './schema';
+import indexer from './indexer';
 
 async function main() {
   const yogaApp = createServer({
@@ -26,7 +27,6 @@ async function main() {
       subscribe: (args: any) => args.rootValue.subscribe(args),
       onSubscribe: async (ctx, msg) => {
         const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped(ctx);
-
         const args = {
           schema,
           operationName: msg.payload.operationName,
@@ -38,7 +38,6 @@ async function main() {
             subscribe,
           },
         };
-
         const errors = validate(args.schema, args.document);
         if (errors.length) return errors;
         return args;
@@ -48,7 +47,11 @@ async function main() {
   );
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main()
+  .then(async () => {
+    await indexer.initialize([]);
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
