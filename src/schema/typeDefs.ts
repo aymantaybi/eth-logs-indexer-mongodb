@@ -117,7 +117,7 @@ type Mutation {
 }
 
 type Subscription {
-  newLogs: [Log]
+  newLogs(tags: [String!]!): [Log]
 }
 `;
 

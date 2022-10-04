@@ -1,3 +1,4 @@
+import { pipe, map, filter } from '@graphql-yoga/node';
 import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import { Filter } from 'eth-logs-indexer';
 import { v4 as uuidv4 } from 'uuid';
@@ -72,7 +73,12 @@ const resolvers = {
   },
   Subscription: {
     newLogs: {
-      subscribe: () => pubSub.subscribe('newLogs'),
+      subscribe: (_: any, args: { tags: string[] }) =>
+        pipe(
+          pubSub.subscribe('newLogs'),
+          map((logs: any[]) => logs.filter((log) => args.tags.includes(log.filter.tag))),
+          filter((logs: any[]) => logs.length > 0),
+        ),
       resolve: (payload: any) => payload,
     },
   },
