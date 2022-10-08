@@ -1,4 +1,4 @@
-import Indexer, { Filter, DecodedLog } from 'eth-logs-indexer';
+import Indexer, { DecodedLog } from 'eth-logs-indexer';
 import pubSub from './pubSub';
 import mongoClient from './mongoClient';
 
@@ -39,17 +39,10 @@ const latestBlockNumber = {
   },
 };
 
-const options = {
-  include: {
-    transaction: ['blockNumber', 'from', 'hash', 'transactionIndex'],
-  },
-};
-
 const indexer = new Indexer({
   host,
   save,
   latestBlockNumber,
-  options,
 });
 
 export default indexer;

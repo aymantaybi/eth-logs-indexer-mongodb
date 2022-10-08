@@ -38,6 +38,7 @@ const resolvers = {
   },
   Mutation: {
     start: async (_: any, args: { blockNumber: number }) => {
+      if (indexer.isRunning()) return false;
       const { blockNumber } = args;
       await indexer.start(blockNumber);
       return true;

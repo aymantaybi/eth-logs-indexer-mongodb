@@ -61,10 +61,19 @@ type JsonInterface {
   function: AbiItem
 }
 
+type OptionsInclude {
+  transaction: [String]
+}
+
+type FilterOptions {
+  include: OptionsInclude
+}
+
 type Filter {
   address: String
   jsonInterface: JsonInterface
   tag: String
+  options: FilterOptions
 }
 
 type Query {
@@ -104,9 +113,18 @@ input JsonInterfaceInput {
   function: AbiItemInput
 }
 
+input OptionsIncludeInput {
+  transaction: [String]
+}
+
+input FilterOptionsInput {
+  include: OptionsIncludeInput
+}
+
 input FilterInput {
   address: String
   jsonInterface: JsonInterfaceInput
+  options: FilterOptionsInput
 }
 
 type Mutation {
