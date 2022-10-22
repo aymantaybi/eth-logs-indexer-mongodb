@@ -52,7 +52,9 @@ async function main() {
 main()
   .then(async () => {
     await mongoClient.connect();
-    const filters = await mongoClient.db('eth-logs-indexer:parameters').collection('filters').find({}).toArray();
+    const collection = mongoClient.db('eth-logs-indexer:parameters').collection('filters');
+    await collection.createIndex({ tag: 1 }, { unique: true });
+    const filters = await collection.find({}).toArray();
     await indexer.initialize(filters as unknown as Filter[]);
   })
   .catch((e) => {
