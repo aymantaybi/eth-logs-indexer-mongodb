@@ -1,10 +1,11 @@
-import { pipe, map, filter } from '@graphql-yoga/node';
+import { pipe, map, filter, GraphQLYogaError } from '@graphql-yoga/node';
 import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json';
 import { Filter } from 'eth-logs-indexer';
 import { v4 as uuidv4 } from 'uuid';
 import pubSub from '../pubSub';
 import indexer from '../indexer';
 import mongoClient from '../mongoClient';
+import { validateFilters } from '../helpers/inputValidation';
 
 const resolvers = {
   JSON: GraphQLJSON,
@@ -49,6 +50,8 @@ const resolvers = {
     },
     addFilters: async (_: any, args: { filters: Filter[] }) => {
       const { filters } = args;
+      const errors = validateFilters(filters);
+      if (errors.length) throw new GraphQLYogaError(`Please fix the following errors in your filters : ${JSON.stringify(errors)} `);
       const newFilters: Filter[] = [];
       const oldFilters = indexer.filters || [];
       for (const filter of filters) {

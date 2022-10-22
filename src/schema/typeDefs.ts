@@ -76,9 +76,10 @@ type FilterOptions {
 }
 
 type Filter {
+  chainId: Int
+  tag: String
   address: String
   jsonInterface: JsonInterface
-  tag: String
   options: FilterOptions
 }
 
@@ -129,6 +130,7 @@ input FilterOptionsInput {
 
 input FilterInput {
   chainId: Int
+  tag: String
   address: String
   jsonInterface: JsonInterfaceInput
   options: FilterOptionsInput
