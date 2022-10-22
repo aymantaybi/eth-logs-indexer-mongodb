@@ -8,8 +8,14 @@ type BaseData {
   inputs: JSONObject
 }
 
+type FilterSummary {
+  tag: String
+}
+
 type Log {
+  logIndex: Int
   address: String
+  filter: FilterSummary
   event: BaseData
   function: BaseData
   transaction: JSONObject
@@ -122,6 +128,7 @@ input FilterOptionsInput {
 }
 
 input FilterInput {
+  chainId: Int
   address: String
   jsonInterface: JsonInterfaceInput
   options: FilterOptionsInput
