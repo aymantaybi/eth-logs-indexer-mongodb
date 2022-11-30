@@ -12,15 +12,6 @@ type FilterSummary {
   tag: String
 }
 
-type Log {
-  logIndex: Int
-  address: String
-  filter: FilterSummary
-  event: BaseData
-  function: BaseData
-  transaction: JSONObject
-}
-
 enum AbiType {
   function
   constructor
@@ -83,9 +74,20 @@ type Filter {
   options: FilterOptions
 }
 
+type Log {
+  logIndex: Int
+  address: String
+  filter: FilterSummary
+  event: BaseData
+  function: BaseData
+  transaction: JSONObject
+}
+
 type Query {
-  logs: [Log]
   filters(tags: [String]): [Filter]
+  executeQuery(tag: String, query: JSONObject, options: JSONObject): JSON
+  logsCounts(tags: [String!]!): [Int]
+  chainId: Int
 }
 
 input AbiInputInput {
