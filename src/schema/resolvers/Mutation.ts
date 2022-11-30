@@ -6,7 +6,7 @@ import mongoClient from '../../mongoClient';
 import { validateFilters } from '../../helpers/inputValidation';
 
 async function start(_: any, args: { blockNumber: number }) {
-  if (indexer.isRunning()) return false;
+  if (indexer.filters?.length == 0 || indexer.isRunning()) return false;
   const { blockNumber } = args;
   await indexer.start(blockNumber);
   return true;
