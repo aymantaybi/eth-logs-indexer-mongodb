@@ -9,16 +9,16 @@ const host = WEBSOCKET_PROVIDER_HOST!;
 const save = async (logs: DecodedLog[]) => {
   const set = new Set();
   for (const log of logs) {
-    set.add(log.filter.tag);
+    set.add(log.filterId);
   }
-  const tags = [...set] as string[];
+  const ids = [...set] as string[];
 
   await Promise.all(
-    tags.map((tag) =>
+    ids.map((id) =>
       mongoClient
         .db('eth-logs-indexer:logs')
-        .collection(`tag:${tag}`)
-        .insertMany(logs.filter((log) => log.filter.tag == tag)),
+        .collection(`id:${id}`)
+        .insertMany(logs.filter((log) => log.filterId == id)),
     ),
   );
 
@@ -43,6 +43,10 @@ const indexer = new Indexer({
   host,
   save,
   latestBlockNumber,
+});
+
+indexer.onIterationEnd(() => {
+  pubSub.publish('statusUpdate', indexer.status());
 });
 
 export default indexer;

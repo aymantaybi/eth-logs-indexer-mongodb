@@ -1,33 +1,35 @@
 import mongoClient from '../../mongoClient';
 import { GraphQLYogaError } from '@graphql-yoga/node';
 import indexer from '../../indexer';
+import { Filter } from 'eth-logs-indexer';
 
-async function filters(_: any, args: { tags: string[] }) {
-  const { tags } = args;
-  const query = tags.length ? { tag: { $in: tags } } : {};
-  const filters = await mongoClient.db('eth-logs-indexer:parameters').collection('filters').find(query).toArray();
+const parametersDatabase = mongoClient.db('eth-logs-indexer:parameters');
+const logsDatabase = mongoClient.db('eth-logs-indexer:logs');
+
+async function filters(_: unknown, args: { ids: string[] }) {
+  const { ids } = args;
+  const query = ids.length ? { id: { $in: ids } } : {};
+  const filters = await parametersDatabase.collection('filters').find(query).toArray();
   return filters;
 }
 
-async function executeQuery(_: any, args: { tag: string; query: object; options: object }) {
-  const { tag, query, options } = args;
+async function executeQuery(_: unknown, args: { id: string; query: object; options: object }) {
+  const { id, query, options } = args;
   try {
-    const result = await mongoClient
-      .db('eth-logs-indexer:logs')
-      .collection(`tag:${tag}`)
+    const result = await logsDatabase
+      .collection(`id:${id}`)
       .find(query || {}, options || {})
       .toArray();
-    console.log({ result });
     return result;
   } catch (error: any) {
     throw new GraphQLYogaError(error);
   }
 }
 
-async function logsCounts(_: any, args: { tags: string[] }) {
-  const { tags } = args;
+async function logsCounts(_: unknown, args: { ids: string[] }) {
+  const { ids } = args;
   try {
-    const result = await Promise.all(tags.map((tag) => mongoClient.db('eth-logs-indexer:logs').collection(`tag:${tag}`).estimatedDocumentCount()));
+    const result = await Promise.all(ids.map((id) => logsDatabase.collection(`id:${id}`).estimatedDocumentCount()));
     return result;
   } catch (error: any) {
     throw new GraphQLYogaError(error);
@@ -38,4 +40,14 @@ function chainId() {
   return indexer.chainId;
 }
 
-export default { filters, executeQuery, logsCounts, chainId };
+async function logsPreview(_: unknown, args: { filter: Filter; transactionHash: string }) {
+  const { filter, transactionHash } = args;
+  const logsPreview = await indexer.previewLogs(filter, transactionHash);
+  return logsPreview;
+}
+
+async function status() {
+  return indexer.status();
+}
+
+export default { filters, executeQuery, logsCounts, chainId, logsPreview, status };

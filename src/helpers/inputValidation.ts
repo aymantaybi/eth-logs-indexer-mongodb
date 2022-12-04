@@ -12,7 +12,7 @@ export function validateFilters(filters: Filter[]) {
   const errors: { filter: Filter; reason: string }[] = [];
 
   for (const filter of filters) {
-    if (filter.tag && !uuidValidateV4(filter.tag)) {
+    if (filter.id && !uuidValidateV4(filter.id)) {
       errors.push({ filter, reason: 'Invalid uuidv4' });
     }
   }

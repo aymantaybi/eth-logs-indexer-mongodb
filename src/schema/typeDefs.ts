@@ -8,10 +8,6 @@ type BaseData {
   inputs: JSONObject
 }
 
-type FilterSummary {
-  tag: String
-}
-
 enum AbiType {
   function
   constructor
@@ -68,7 +64,7 @@ type FilterOptions {
 
 type Filter {
   chainId: Int
-  tag: String
+  id: String
   address: String
   jsonInterface: JsonInterface
   options: FilterOptions
@@ -77,17 +73,19 @@ type Filter {
 type Log {
   logIndex: Int
   address: String
-  filter: FilterSummary
+  filterId: String
   event: BaseData
   function: BaseData
   transaction: JSONObject
 }
 
 type Query {
-  filters(tags: [String]): [Filter]
-  executeQuery(tag: String, query: JSONObject, options: JSONObject): JSON
-  logsCounts(tags: [String!]!): [Int]
+  filters(ids: [String]): JSON
+  executeQuery(chainId: Int, id: String, query: JSONObject, options: JSONObject): JSON
+  logsCounts(ids: [String!]!): [Int]
   chainId: Int
+  logsPreview(filter: FilterInput, transactionHash: String): JSON
+  status: JSON
 }
 
 input AbiInputInput {
@@ -132,7 +130,7 @@ input FilterOptionsInput {
 
 input FilterInput {
   chainId: Int
-  tag: String
+  id: String
   address: String
   jsonInterface: JsonInterfaceInput
   options: FilterOptionsInput
@@ -142,11 +140,12 @@ type Mutation {
   start(blockNumber: Int): Boolean!
   stop: Boolean!
   addFilters(filters: [FilterInput!]!): [String]
-  removeFilters(tags: [String!]!): [String]
+  removeFilters(ids: [String!]!): [String]
 }
 
 type Subscription {
-  newLogs(tags: [String!]!): [Log]
+  newLogs(ids: [String!]!): [Log]
+  statusUpdate: JSON
 }
 `;
 
