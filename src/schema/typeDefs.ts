@@ -65,6 +65,7 @@ type FilterOptions {
 type Filter {
   chainId: Int
   id: String
+  tag: String
   address: String
   jsonInterface: JsonInterface
   options: FilterOptions
@@ -131,6 +132,7 @@ input FilterOptionsInput {
 input FilterInput {
   chainId: Int
   id: String
+  tag: String
   address: String
   jsonInterface: JsonInterfaceInput
   options: FilterOptionsInput
@@ -141,6 +143,7 @@ type Mutation {
   stop: Boolean!
   addFilters(filters: [FilterInput!]!): [String]
   removeFilters(ids: [String!]!): [String]
+  tagFilter(id: String!, tag: String!): JSONObject
 }
 
 type Subscription {

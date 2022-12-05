@@ -54,4 +54,10 @@ async function removeFilters(_: unknown, args: { ids: string[] }) {
   return ids;
 }
 
-export default { start, stop, addFilters, removeFilters };
+async function tagFilter(_: unknown, args: { id: string; tag: string }) {
+  const { id, tag } = args;
+  await parametersDatabase.collection('filters').updateOne({ id }, { $set: { tag } });
+  return { id, tag };
+}
+
+export default { start, stop, addFilters, removeFilters, tagFilter };
