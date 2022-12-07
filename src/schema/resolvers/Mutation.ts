@@ -6,8 +6,7 @@ import mongoClient from '../../mongoClient';
 import { validateFilters } from '../../helpers/inputValidation';
 import pubSub from '../../pubSub';
 
-const parametersDatabase = mongoClient.db('eth-logs-indexer:parameters');
-const logsDatabase = mongoClient.db('eth-logs-indexer:logs');
+const indexerDatabase = mongoClient.db('eth-logs-indexer');
 
 async function start(_: unknown, args: { blockNumber: number }) {
   if (indexer.filters?.length == 0 || indexer.isRunning()) return false;
@@ -27,36 +26,33 @@ async function addFilters(_: unknown, args: { filters: Filter[] }) {
   const { filters } = args;
   const errors = validateFilters(filters);
   if (errors.length) throw new GraphQLYogaError(`Please fix the following errors in your filters : ${JSON.stringify(errors)} `);
-  const newFilters: Filter[] = [];
-  const oldFilters = indexer.filters || [];
-  for (const filter of filters) {
-    const id = filter.id || uuidv4();
-    newFilters.push({ ...filter, id });
-  }
   try {
-    await parametersDatabase.collection('filters').insertMany(newFilters);
+    const newFilters = filters.map((item) => ({ ...item, id: item.id || uuidv4() }));
+    const oldFilters = indexer.filters;
+    await indexer.setFilters(newFilters.concat(oldFilters));
+    pubSub.publish('statusUpdate', indexer.status());
+    return newFilters.map((item) => item.id);
   } catch (error) {
     throw new GraphQLYogaError(error as string);
   }
-  indexer.setFilters(newFilters.concat(oldFilters));
-  const ids = newFilters.map((filter) => filter.id);
-  pubSub.publish('statusUpdate', indexer.status());
-  return ids;
 }
 
 async function removeFilters(_: unknown, args: { ids: string[] }) {
   const { ids } = args;
-  await parametersDatabase.collection('filters').deleteMany({ id: { $in: ids } });
-  await Promise.all(ids.map((id) => logsDatabase.collection(`id:${id}`).drop()));
-  const filters: Filter[] = (indexer.filters || []).filter((item) => !ids.includes(item.id as string));
-  indexer.setFilters(filters);
-  pubSub.publish('statusUpdate', indexer.status());
-  return ids;
+  try {
+    const oldFilters = indexer.filters;
+    const newFilters = oldFilters.filter((item) => !ids.includes(item.id));
+    await indexer.setFilters(newFilters);
+    pubSub.publish('statusUpdate', indexer.status());
+    return ids;
+  } catch (error) {
+    throw new GraphQLYogaError(error as string);
+  }
 }
 
 async function tagFilter(_: unknown, args: { id: string; tag: string }) {
   const { id, tag } = args;
-  await parametersDatabase.collection('filters').updateOne({ id }, { $set: { tag } });
+  await indexerDatabase.collection('filters').updateOne({ id }, { $set: { tag } });
   return { id, tag };
 }
 

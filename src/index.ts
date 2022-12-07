@@ -3,7 +3,6 @@ dotenv.config();
 import { createServer } from '@graphql-yoga/node';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { Filter } from 'eth-logs-indexer';
 import schema from './schema';
 import indexer from './indexer';
 import mongoClient from './mongoClient';
@@ -52,10 +51,8 @@ async function main() {
 main()
   .then(async () => {
     await mongoClient.connect();
-    const collection = mongoClient.db('eth-logs-indexer:parameters').collection('filters');
-    await collection.createIndex({ id: 1 }, { unique: true });
-    const filters = await collection.find({}).toArray();
-    await indexer.initialize(filters as unknown as Filter[]);
+    await indexer.initialize();
+    await indexer.setOptions({ maxBlocks: 100 });
   })
   .catch((e) => {
     console.error(e);
