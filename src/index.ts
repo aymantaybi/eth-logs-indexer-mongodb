@@ -6,6 +6,11 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import schema from './schema';
 import indexer from './indexer';
 import mongoClient from './mongoClient';
+import { DecodedLog } from 'eth-logs-indexer';
+
+const indexerDatabase = mongoClient.db('eth-logs-indexer');
+const logsCollection = indexerDatabase.collection<DecodedLog>('logs');
+const filtersCollection = indexerDatabase.collection<any>('filters');
 
 async function main() {
   const yogaApp = createServer({
@@ -51,6 +56,9 @@ async function main() {
 main()
   .then(async () => {
     await mongoClient.connect();
+    await logsCollection.createIndex({ filterId: 1 });
+    await filtersCollection.createIndex({ id: 1 });
+    await filtersCollection.createIndex({ chainId: 1 });
     await indexer.initialize();
     await indexer.setOptions({ maxBlocks: 100 });
   })
