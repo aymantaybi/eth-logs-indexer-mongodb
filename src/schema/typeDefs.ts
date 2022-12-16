@@ -123,6 +123,7 @@ input JsonInterfaceInput {
 
 input OptionsIncludeInput {
   transaction: [String]
+  block: [String]
 }
 
 input FilterOptionsInput {

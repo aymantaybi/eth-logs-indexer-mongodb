@@ -14,6 +14,9 @@ const filtersCollection = indexerDatabase.collection<any>('filters');
 
 async function main() {
   const yogaApp = createServer({
+    cors: {
+      origin: '*',
+    },
     schema,
     graphiql: {
       subscriptionsProtocol: 'WS',
@@ -60,7 +63,7 @@ main()
     await filtersCollection.createIndex({ id: 1 });
     await filtersCollection.createIndex({ chainId: 1 });
     await indexer.initialize();
-    await indexer.setOptions({ maxBlocks: 100 });
+    await indexer.setOptions({ maxBlocks: 1000 });
   })
   .catch((e) => {
     console.error(e);
