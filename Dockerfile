@@ -39,7 +39,6 @@ COPY --from=builder /usr/src/app/package.json package.json
 COPY --from=builder /usr/src/app/package-lock.json package-lock.json
 
 # Run the built application when the container starts.
-EXPOSE 4000
 RUN chown -R node /usr/src/app
 USER node
 CMD ["npm", "start"]
