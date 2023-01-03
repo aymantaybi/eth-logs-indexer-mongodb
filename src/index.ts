@@ -5,18 +5,13 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import schema from './schema';
 import indexer from './indexer';
-import mongoClient from './mongoClient';
-import { Log } from 'eth-logs-indexer/dist/interfaces';
+import mongoClient, { filtersCollection, logsCollection } from './mongoClient';
 
 const { PORT } = process.env;
 
 if (!PORT) throw new Error('Missing PORT env variable !');
 
 const port = Number(PORT);
-
-const indexerDatabase = mongoClient.db('eth-logs-indexer');
-const logsCollection = indexerDatabase.collection<Log>('logs');
-const filtersCollection = indexerDatabase.collection<any>('filters');
 
 async function main() {
   const yogaApp = createServer({

@@ -1,12 +1,10 @@
 import { GraphQLYogaError } from '@graphql-yoga/node';
-import { Filter } from 'eth-logs-indexer/dist/interfaces';;
+import { Filter } from 'eth-logs-indexer/dist/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import indexer from '../../indexer';
-import mongoClient from '../../mongoClient';
+import { filtersCollection } from '../../mongoClient';
 import { validateFilters } from '../../helpers/inputValidation';
 import pubSub from '../../pubSub';
-
-const indexerDatabase = mongoClient.db('eth-logs-indexer');
 
 async function start(_: unknown, args: { blockNumber: number }) {
   if (indexer.filters?.length == 0 || indexer.isRunning()) return false;
@@ -52,7 +50,7 @@ async function removeFilters(_: unknown, args: { ids: string[] }) {
 
 async function tagFilter(_: unknown, args: { id: string; tag: string }) {
   const { id, tag } = args;
-  await indexerDatabase.collection('filters').updateOne({ id }, { $set: { tag } });
+  await filtersCollection.updateOne({ id }, { $set: { tag } });
   return { id, tag };
 }
 
