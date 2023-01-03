@@ -5,7 +5,7 @@ To run this project, you will need to add the following environment variables to
 
 `PORT`: server port, ex: `4000`
 
-`HTTP_PROVIDER_HOST`: JSON-RPC node URL, ex: `http://127.0.01:8545`
+`HTTP_PROVIDER_HOST`: JSON-RPC node URL, ex: `http://127.0.0.1:8545`
 
 `MONGODB_URI`: MongoDB instance URL, ex: `mongodb://127.0.0.1:27017`
 
