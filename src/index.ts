@@ -60,8 +60,8 @@ main()
   .then(async () => {
     await mongoClient.connect();
     await logsCollection.createIndex({ filterId: 1 });
-    await logsCollection.createIndex({ 'transaction.blockNumber': 1, 'transaction.transactionIndex': 1, logIndex: 1 });
-    await filtersCollection.createIndex({ id: 1 });
+    await logsCollection.createIndex({ 'transaction.blockNumber': 1, 'transaction.transactionIndex': 1, logIndex: 1 }, { unique: true });
+    await filtersCollection.createIndex({ id: 1 }, { unique: true });
     await filtersCollection.createIndex({ chainId: 1 });
     await indexer.initialize();
     await indexer.setOptions({ maxBlocks: 1000 });
