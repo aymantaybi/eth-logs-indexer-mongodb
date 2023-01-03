@@ -19,7 +19,19 @@ const blockNumberCollection = indexerDatabase.collection<{ chainId: number; bloc
 
 const save: Save = {
   async logs(logs: Log[]) {
-    await logsCollection.insertMany(logs);
+    await logsCollection.bulkWrite(
+      logs.map((log) => ({
+        replaceOne: {
+          filter: {
+            'transaction.blockNumber': log.transaction.blockNumber,
+            'transaction.transactionIndex': log.transaction.transactionIndex,
+            logIndex: log.logIndex,
+          },
+          replacement: log,
+          upsert: true,
+        },
+      })),
+    );
     pubSub.publish('newLogs', logs);
   },
   async filters(filters: Filter[]) {
