@@ -64,7 +64,6 @@ main()
     await filtersCollection.createIndex({ id: 1 }, { unique: true });
     await filtersCollection.createIndex({ chainId: 1 });
     await indexer.initialize();
-    await indexer.setOptions({ maxBlocks: 1000 });
   })
   .catch((e) => {
     console.error(e);
