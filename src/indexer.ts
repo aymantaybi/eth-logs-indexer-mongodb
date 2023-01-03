@@ -1,4 +1,5 @@
-import Indexer, { DecodedLog } from 'eth-logs-indexer';
+import Indexer from 'eth-logs-indexer';
+import { Log } from 'eth-logs-indexer/dist/interfaces';
 import pubSub from './pubSub';
 import mongoClient from './mongoClient';
 import { Filter, Load, Options, Save } from 'eth-logs-indexer/dist/interfaces';
@@ -9,13 +10,13 @@ const host = HTTP_PROVIDER_HOST!;
 
 const indexerDatabase = mongoClient.db('eth-logs-indexer');
 
-const logsCollection = indexerDatabase.collection<DecodedLog>('logs');
+const logsCollection = indexerDatabase.collection<Log>('logs');
 const filtersCollection = indexerDatabase.collection<any>('filters');
 const optionsCollection = indexerDatabase.collection<{ chainId: number; options: Options }>('options');
 const blockNumberCollection = indexerDatabase.collection<{ chainId: number; blockNumber: number }>('blockNumber');
 
 const save: Save = {
-  async logs(logs: DecodedLog[]) {
+  async logs(logs: Log[]) {
     await logsCollection.insertMany(logs);
     pubSub.publish('newLogs', logs);
   },
@@ -36,11 +37,7 @@ const save: Save = {
   },
   async options(options: Partial<Options>) {
     const chainId = indexer.chainId;
-    await optionsCollection.updateOne(
-      { chainId },
-      { $set: { chainId, options: { ...indexer.options, ...options } } },
-      { upsert: true },
-    );
+    await optionsCollection.updateOne({ chainId }, { $set: { chainId, options: { ...indexer.options, ...options } } }, { upsert: true });
   },
   async blockNumber(blockNumber: number) {
     const chainId = indexer.chainId;

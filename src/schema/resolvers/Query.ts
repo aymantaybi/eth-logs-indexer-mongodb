@@ -1,10 +1,10 @@
 import mongoClient from '../../mongoClient';
 import { GraphQLYogaError } from '@graphql-yoga/node';
 import indexer from '../../indexer';
-import { DecodedLog, Filter } from 'eth-logs-indexer';
+import { Log, Filter } from 'eth-logs-indexer/dist/interfaces';
 
 const indexerDatabase = mongoClient.db('eth-logs-indexer');
-const logsCollection = indexerDatabase.collection<DecodedLog>('logs');
+const logsCollection = indexerDatabase.collection<Log>('logs');
 
 async function filters(_: unknown, args: { ids: string[] }) {
   const { ids } = args;

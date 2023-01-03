@@ -1,5 +1,5 @@
 import { GraphQLYogaError } from '@graphql-yoga/node';
-import { Filter } from 'eth-logs-indexer';
+import { Filter } from 'eth-logs-indexer/dist/interfaces';;
 import { v4 as uuidv4 } from 'uuid';
 import indexer from '../../indexer';
 import mongoClient from '../../mongoClient';

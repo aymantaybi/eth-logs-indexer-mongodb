@@ -1,5 +1,4 @@
-import { Filter } from 'eth-logs-indexer';
-import { v4 as uuidv4 } from 'uuid';
+import { Filter } from 'eth-logs-indexer/dist/interfaces';
 import { version as uuidVersion } from 'uuid';
 import { validate as uuidValidate } from 'uuid';
 import { NIL as NIL_UUID } from 'uuid';
