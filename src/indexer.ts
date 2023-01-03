@@ -6,7 +6,9 @@ import { Filter, Load, Options, Save } from 'eth-logs-indexer/dist/interfaces';
 
 const { HTTP_PROVIDER_HOST } = process.env;
 
-const host = HTTP_PROVIDER_HOST!;
+if(!HTTP_PROVIDER_HOST) throw new Error('Missing HTTP_PROVIDER_HOST env variable !');
+
+const host = HTTP_PROVIDER_HOST;
 
 const indexerDatabase = mongoClient.db('eth-logs-indexer');
 

@@ -2,7 +2,9 @@ import { MongoClient } from 'mongodb';
 
 const { MONGODB_URI } = process.env;
 
-const url = MONGODB_URI!;
+if(!MONGODB_URI) throw new Error('Missing MONGODB_URI env variable !');
+
+const url = MONGODB_URI;
 
 const mongoClient = new MongoClient(url);
 
