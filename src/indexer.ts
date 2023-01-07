@@ -16,6 +16,7 @@ const save: Save = {
       logs.map((log) => ({
         replaceOne: {
           filter: {
+            filterId: log.filterId,
             'transaction.blockNumber': log.transaction.blockNumber,
             'transaction.transactionIndex': log.transaction.transactionIndex,
             logIndex: log.logIndex,
