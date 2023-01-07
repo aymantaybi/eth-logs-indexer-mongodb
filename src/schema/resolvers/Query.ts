@@ -2,7 +2,7 @@ import mongoClient from '../../mongoClient';
 import { GraphQLYogaError } from '@graphql-yoga/node';
 import indexer from '../../indexer';
 import { Log, Filter } from 'eth-logs-indexer/dist/interfaces';
-import { AggregateOptions, Document } from 'mongodb';
+import { AggregateOptions, Document, Filter as mongodbFilter, FindOptions } from 'mongodb';
 
 const indexerDatabase = mongoClient.db('eth-logs-indexer');
 const logsCollection = indexerDatabase.collection<Log>('logs');
@@ -14,10 +14,10 @@ async function filters(_: unknown, args: { ids: string[] }) {
   return filters;
 }
 
-async function executeQuery(_: unknown, args: { id: string; query: object; options: object }) {
-  const { id, query, options } = args;
+async function executeQuery(_: unknown, args: { query: mongodbFilter<Log>; options?: FindOptions<Document> | undefined }) {
+  const { query, options } = args;
   try {
-    const result = await logsCollection.find({ ...query, filterId: id }, options || {}).toArray();
+    const result = await logsCollection.find({ ...query }, options || {}).toArray();
     return result;
   } catch (error: unknown) {
     throw new GraphQLYogaError(error as string);

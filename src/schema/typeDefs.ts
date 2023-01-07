@@ -82,7 +82,7 @@ type Log {
 
 type Query {
   filters(ids: [String]): JSON
-  executeQuery(chainId: Int, id: String, query: JSONObject, options: JSONObject): JSON
+  executeQuery(query: JSONObject, options: JSONObject): JSON
   executeAggregation(pipeline: JSON, options: JSONObject): JSON
   logsCounts(ids: [String!]!): [Int]
   chainId: Int

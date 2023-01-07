@@ -50,6 +50,8 @@ async function removeFilters(_: unknown, args: { ids: string[] }) {
 
 async function tagFilter(_: unknown, args: { id: string; tag: string }) {
   const { id, tag } = args;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   await filtersCollection.updateOne({ id }, { $set: { tag } });
   return { id, tag };
 }
