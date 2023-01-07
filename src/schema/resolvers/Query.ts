@@ -2,6 +2,7 @@ import mongoClient from '../../mongoClient';
 import { GraphQLYogaError } from '@graphql-yoga/node';
 import indexer from '../../indexer';
 import { Log, Filter } from 'eth-logs-indexer/dist/interfaces';
+import { AggregateOptions, Document } from 'mongodb';
 
 const indexerDatabase = mongoClient.db('eth-logs-indexer');
 const logsCollection = indexerDatabase.collection<Log>('logs');
@@ -18,8 +19,18 @@ async function executeQuery(_: unknown, args: { id: string; query: object; optio
   try {
     const result = await logsCollection.find({ ...query, filterId: id }, options || {}).toArray();
     return result;
-  } catch (error: any) {
-    throw new GraphQLYogaError(error);
+  } catch (error: unknown) {
+    throw new GraphQLYogaError(error as string);
+  }
+}
+
+async function executeAggregation(_: unknown, args: { pipeline: Document[]; options: AggregateOptions }) {
+  const { pipeline, options } = args;
+  try {
+    const result = await logsCollection.aggregate(pipeline, options || undefined).toArray();
+    return result;
+  } catch (error: unknown) {
+    throw new GraphQLYogaError(error as string);
   }
 }
 
@@ -47,4 +58,4 @@ async function status() {
   return indexer.status();
 }
 
-export default { filters, executeQuery, logsCounts, chainId, logsPreview, status };
+export default { filters, executeQuery, executeAggregation, logsCounts, chainId, logsPreview, status };
