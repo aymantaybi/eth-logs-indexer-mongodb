@@ -80,6 +80,12 @@ type Log {
   transaction: JSONObject
 }
 
+type IndexerOptionsType { 
+  delay: Int
+  maxBlocks: Int
+  confirmationBlocks: Int
+}
+
 type Query {
   filters(ids: [String]): JSON
   executeQuery(query: JSONObject, options: JSONObject): JSON
@@ -140,12 +146,19 @@ input FilterInput {
   options: FilterOptionsInput
 }
 
+input IndexerOptionsInput { 
+  delay: Int
+  maxBlocks: Int
+  confirmationBlocks: Int
+}
+
 type Mutation {
   start(blockNumber: Int): Boolean!
   stop: Boolean!
   addFilters(filters: [FilterInput!]!): [String]
   removeFilters(ids: [String!]!): [String]
   tagFilter(id: String!, tag: String!): JSONObject
+  setOptions(options: IndexerOptionsInput): IndexerOptionsType
 }
 
 type Subscription {

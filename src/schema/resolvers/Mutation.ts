@@ -1,5 +1,5 @@
 import { GraphQLYogaError } from '@graphql-yoga/node';
-import { Filter } from 'eth-logs-indexer/dist/interfaces';
+import { Filter, Options } from 'eth-logs-indexer/dist/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import indexer from '../../indexer';
 import { filtersCollection } from '../../mongoClient';
@@ -56,4 +56,14 @@ async function tagFilter(_: unknown, args: { id: string; tag: string }) {
   return { id, tag };
 }
 
-export default { start, stop, addFilters, removeFilters, tagFilter };
+async function setOptions(_: unknown, args: { options: Partial<Options> }) {
+  const { options } = args;
+  try {
+    await indexer.setOptions(options);
+    return indexer.options;
+  } catch (error) {
+    throw new GraphQLYogaError(error as string);
+  }
+}
+
+export default { start, stop, addFilters, removeFilters, tagFilter, setOptions };
