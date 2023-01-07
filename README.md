@@ -5,9 +5,9 @@ To run this project, you will need to add the following environment variables to
 
 `PORT`: server port, ex: `4000`
 
-`HTTP_PROVIDER_HOST`: JSON-RPC node URL, ex: `http://127.0.0.1:8545`
+`HTTP_PROVIDER_HOST`: JSON-RPC node URL, ex: `http://172.17.0.1:8545`
 
-`MONGODB_URI`: MongoDB instance URL, ex: `mongodb://127.0.0.1:27017`
+`MONGODB_URI`: MongoDB instance URL, ex: `mongodb://host.docker.internal:27017`
 
 
 ## Build
@@ -23,6 +23,18 @@ $ docker run -p 4000:4000 --name indexer -e PORT=4000 -e MONGODB_URI=mongodb://h
 ```
 
 ## Changelog
+
+### [1.4.5] - 2023-01-08
+
+#### Added
+
+- `setOptions` Mutation.
+- `executeAggregation` Query.
+- `autoStart` Option.
+
+#### Changed
+
+- `executeQuery` Mutation: remove `chainId` & `filterId` from required mutation arguments.
 
 ### [1.4.4] - 2023-01-03
 

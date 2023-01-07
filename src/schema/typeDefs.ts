@@ -84,6 +84,7 @@ type IndexerOptionsType {
   delay: Int
   maxBlocks: Int
   confirmationBlocks: Int
+  autoStart: Boolean
 }
 
 type Query {
@@ -150,6 +151,7 @@ input IndexerOptionsInput {
   delay: Int
   maxBlocks: Int
   confirmationBlocks: Int
+  autoStart: Boolean
 }
 
 type Mutation {
