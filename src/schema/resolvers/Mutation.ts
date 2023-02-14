@@ -2,7 +2,7 @@ import { GraphQLYogaError } from '@graphql-yoga/node';
 import { Filter, Options } from 'eth-logs-indexer/dist/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import indexer from '../../indexer';
-import { filtersCollection } from '../../mongoClient';
+import { filtersCollection, logsCollection } from '../../mongoClient';
 import { validateFilters } from '../../helpers/inputValidation';
 import pubSub from '../../pubSub';
 
@@ -41,6 +41,7 @@ async function removeFilters(_: unknown, args: { ids: string[] }) {
     const oldFilters = indexer.filters;
     const newFilters = oldFilters.filter((item) => !ids.includes(item.id));
     await indexer.setFilters(newFilters);
+    await logsCollection.deleteMany({ filterId: { $in: ids } });
     pubSub.publish('statusUpdate', indexer.status());
     return ids;
   } catch (error) {
