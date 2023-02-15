@@ -156,7 +156,7 @@ input IndexerOptionsInput {
 
 type Mutation {
   start(blockNumber: Int): Boolean!
-  stop: Boolean!
+  stop(timeout: Int): Boolean!
   addFilters(filters: [FilterInput!]!): [String]
   removeFilters(ids: [String!]!): [String]
   tagFilter(id: String!, tag: String!): JSONObject

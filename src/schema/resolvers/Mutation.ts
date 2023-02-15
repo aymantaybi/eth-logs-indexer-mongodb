@@ -15,7 +15,7 @@ async function start(_: unknown, args: { blockNumber: number }) {
 }
 
 async function stop() {
-  await indexer.stop();
+  await indexer.stop({});
   pubSub.publish('statusUpdate', indexer.status());
   return true;
 }
