@@ -1,4 +1,4 @@
-import Indexer from 'eth-logs-indexer';
+import { Indexer } from 'eth-logs-indexer';
 import { Log } from 'eth-logs-indexer/dist/interfaces';
 import pubSub from './pubSub';
 import { blockNumberCollection, filtersCollection, logsCollection, optionsCollection } from './mongoClient';
@@ -76,7 +76,7 @@ const load: Load = {
 
 const indexer = new Indexer({ host, load, save });
 
-indexer.onIterationEnd(() => {
+indexer.on('processing', () => {
   pubSub.publish('statusUpdate', indexer.status());
 });
 
