@@ -49,3 +49,9 @@ $ docker run -p 4000:4000 --name indexer -e PORT=4000 -e MONGODB_URI=mongodb://h
 #### Removed
 
 - Set options at server startup.
+
+### [1.4.5] - 2023-02-15
+
+#### Added
+
+- Allow passing custom timeout argument for stop mutation.
